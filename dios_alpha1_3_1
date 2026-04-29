@@ -633,7 +633,7 @@ app.run()"""
                     self._print_buf("Downloading update...")
 
                     # Скачиваем новый исходный код
-                    code_url = "https://raw.githubusercontent.com/YourName/DiOS/main/dios.py"
+                    code_url = "https://github.com/ThisGKlADiamond/DiOS-Diamonds-.git"
                     urllib.request.urlretrieve(code_url, "dios_updated.py")
 
                     self._print_buf("Update downloaded! Please close the OS and run dios_updated.py")
