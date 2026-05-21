@@ -1,12 +1,10 @@
 import os
 import sys
-import platform
 import shlex
 import time
 import shutil
 import random
 import json
-import subprocess
 import math
 import calendar
 from datetime import datetime
@@ -86,7 +84,7 @@ class DiOS:
         self.current_dir = os.getcwd()
         self.user = "Guest"
         self.current_user = "Guest"
-        self.version = "alpha 1.5"  # UPDATED VERSION TO 1.5
+        self.version = "alpha 1.5.1"  # UPDATED VERSION TO 1.5
         self.config_file = "dios_sys.json"
         self.backup_file = "dios_sys_backup.json"
         self.messenger_contacts = {"1": "Alex (Friend)", "2": "CodeMind AI"}
@@ -128,79 +126,48 @@ class DiOS:
 
         self.theme_prefix = THEMES["cyber"]
 
-    class CommandHandler:
-        def __init__(self):
-            self.commands = {
-                'clear': (self.cmd_clear, 'hint_clear'),
-                'resolution': (self.cmd_resolution, 'hint_menu'),
-                'store': (self.cmd_store, 'hint_store'),
-                'sysmon': (self.cmd_sysmon, 'hint_sysmon'),
-                'backup': (self.cmd_backup, 'hint_backup'),
-                'restore': (self.cmd_restore, 'hint_restore'),
-                'history': (self.cmd_history, 'hint_history'),
-                'charge': (self.cmd_charge, 'hint_charge'),
-                'lock': (self.cmd_lock, 'hint_lock'),
-                'time': (self.cmd_time, 'hint_time'),
-                'calendar': (self.cmd_calendar, 'hint_calendar'),
-                'weather': (self.cmd_weather, 'hint_weather'),
-                'notifications': (self.cmd_notifications, 'hint_notifications'),
-                'alias': (self.cmd_alias, 'hint_alias'),
-                'autostart': (self.cmd_autostart, 'hint_autostart'),
+        self.help_text = f"""
+DiOS {self.version} Help:
+clear    update       sysmon       backup
 
-                'whoami': (self.cmd_whoami, 'hint_whoami'),
-                'su': (self.cmd_su, 'hint_su'),
-                'sudo': (self.cmd_sudo, 'hint_sudo'),
-                'sh': (self.cmd_sh, 'hint_sh'),
-                'run': (self.cmd_run, 'hint_run'),
-                'new_user': (self.cmd_new_user, 'hint_new_user'),
-                'profile': (self.cmd_profile, 'hint_profile'),  # Исправлено: было self.cmd_, стало self.cmd_profile
+restore     history      charge      time 
 
-                'files': (self.cmd_files, 'hint_files'),
-                'cd': (self.cmd_cd, 'hint_cd'),
-                'mkdir': (self.cmd_mkdir, 'hint_mkdir'),
-                'rm': (self.cmd_rm, 'hint_rm'),
-                'cat': (self.cmd_cat, 'hint_cat'),
-                'zip': (self.cmd_zip, 'hint_zip'),
-                'unzip': (self.cmd_unzip, 'hint_unzip'),
-                'ping': (self.cmd_ping, 'hint_ping'),
-                'wget': (self.cmd_wget, 'hint_wget'),
-                'ssh': (self.cmd_ssh, 'hint_ssh'),
+calendar       weather      notifications
 
-                'ps': (self.cmd_ps, 'hint_ps'),
-                'kill': (self.cmd_kill, 'hint_kill'),
+alias  autostart  whoami        su <user>
 
-                'browser': (self.cmd_browser, 'hint_browser'),
-                'calc': (self.cmd_calc, 'hint_calc'),
-                'messages': (self.cmd_messages, 'hint_messages'),
-                'antivirus': (self.cmd_antivirus, 'hint_antivirus'),
-                'notepad': (self.cmd_notepad, 'hint_notepad'),
-                'paint': (self.cmd_paint, 'hint_paint'),
-                'edit': (self.cmd_edit, 'hint_edit'),
-                'construction': (self.cmd_construction, 'hint_construction'),
-                'hide_seek': (self.cmd_hide_seek, 'hint_hide_seek'),
-                'number_guess': (self.cmd_number_guess, 'hint_number_guess'),
-                'moryak': (self.cmd_moryak, 'hint_moryak')  # Исправлено: убрано .exe из имени метода и ключа
-            }
-            self._validate_commands()
+sudo <cmd>  sh <file>  run <file>   files
 
-        def _validate_commands(self):
-            """Проверяет, что все обработчики команд являются вызываемыми объектами (callable)"""
-            for cmd_name, (handler, hint) in self.commands.items():
-                if not callable(handler):
-                    raise ValueError(f"Обработчик для команды '{cmd_name}' не является вызываемым объектом")
+cd <dir>      mkdir <dir>     rm <target> 
 
-        # Заглушки методов-обработчиков (замените на реальную логику)
-        def cmd_clear(self, *args):
-            print("Команда clear выполнена")
+cat <file>      zip <dir>    unzip <file>
 
-        def cmd_resolution(self, *args):
-            print("Команда resolution выполнена")
+ping <host>    wget <url>      ssh <u@ip> 
+ 
+ps   kill <pid>    coins   bank <usr> <#>
 
-        def cmd_profile(self, *args):
-            print("Команда profile выполнена")
+browser   calc    messages      antivirus
 
-        def cmd_moryak(self, *args):
-            print("Команда moryak выполнена")
+notepad  paint    edit <f>   construction
+
+hide_seek     number_guess     moryak.exe
+
+full_help  
+"""
+
+    def set_4_3_resolution(self):
+        sys.stdout.write('\x1b[8;60;80t')
+        sys.stdout.flush()
+
+    def beep(self, freq=600, duration=150):
+        if HAS_WINDOWS_API:
+            try:
+                winsound.Beep(freq, duration)
+            except:
+                pass
+        else:
+            sys.stdout.write('\a')
+            sys.stdout.flush()
 
     def set_notify(self, text):
         self.notification = (text, time.time())
@@ -209,6 +176,7 @@ class DiOS:
         if len(self.user_data["notifications"]) > 50:
             self.user_data["notifications"].pop()
         self.beep(800, 100)
+
 
     def add_xp(self, amount):
         if self.user_data.get("xp_boost", False):
@@ -2089,6 +2057,7 @@ class DiOS:
             elif self.current_state == "power_off":
                 self.shutdown_sequence(target_state="halt")
                 self.power_on = False
+
 
 
 reset_col = "\033[0m"
